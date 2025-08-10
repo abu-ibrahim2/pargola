@@ -15,7 +15,7 @@ export async function updateSession(request: NextRequest) {
 
   // With Fluid compute, don't put this client in a global environment
   // variable. Always create a new one on each request.
-  const supabase = createServerClient(
+  createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_OR_ANON_KEY!,
     {
@@ -25,17 +25,17 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
+            request.cookies.set(name, value)
           );
           supabaseResponse = NextResponse.next({
             request,
           });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options),
+            supabaseResponse.cookies.set(name, value, options)
           );
         },
       },
-    },
+    }
   );
 
   // Do not run code between createServerClient and
@@ -44,20 +44,23 @@ export async function updateSession(request: NextRequest) {
 
   // IMPORTANT: If you remove getClaims() and you use server-side rendering
   // with the Supabase client, your users may be randomly logged out.
-  const { data } = await supabase.auth.getClaims();
-  const user = data?.claims;
 
-  if (
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    !request.nextUrl.pathname.startsWith("/login") &&
-    !request.nextUrl.pathname.startsWith("/auth")
-  ) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone();
-    url.pathname = "/auth/login";
-    return NextResponse.redirect(url);
-  }
+  //-------------------------------
+  // const { data } = await supabase.auth.getClaims();
+  // const user = data?.claims;
+
+  // if (
+  //   request.nextUrl.pathname !== "/" &&
+  //   !user &&
+  //   !request.nextUrl.pathname.startsWith("/login") &&
+  //   !request.nextUrl.pathname.startsWith("/auth")
+  // ) {
+  //   // no user, potentially respond by redirecting the user to the login page
+  //   const url = request.nextUrl.clone();
+  //   url.pathname = "/auth/login";
+  //   return NextResponse.redirect(url);
+  // }
+  //-------------------------------
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:
@@ -74,3 +77,51 @@ export async function updateSession(request: NextRequest) {
 
   return supabaseResponse;
 }
+
+// import { NextResponse, type NextRequest } from "next/server";
+// import { createServerClient } from "@supabase/ssr";
+
+// export async function middleware(req: NextRequest) {
+//   const res = NextResponse.next();
+//   const supabase = createServerClient(
+//     process.env.NEXT_PUBLIC_SUPABASE_URL!,
+//     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+//     {
+//       cookies: {
+//         get: (k) => req.cookies.get(k)?.value,
+//         set: () => {},
+//         remove: () => {},
+//       },
+//     }
+//   );
+
+//   const {
+//     data: { user },
+//   } = await supabase.auth.getUser();
+
+//   // Allow the login page itself
+//   if (req.nextUrl.pathname.startsWith("/admin/login")) return res;
+
+//   // Gate /admin/*
+//   if (req.nextUrl.pathname.startsWith("/admin")) {
+//     if (!user) {
+//       const url = req.nextUrl.clone();
+//       url.pathname = "/admin/login";
+//       return NextResponse.redirect(url);
+//     }
+
+//     // Optional: enforce admin role by email or a custom claim
+//     const isAdmin = user.email === process.env.ADMIN_EMAIL; // easiest
+//     if (!isAdmin) {
+//       const url = req.nextUrl.clone();
+//       url.pathname = "/";
+//       return NextResponse.redirect(url);
+//     }
+//   }
+
+//   return res;
+// }
+
+// export const config = {
+//   matcher: ["/admin/:path*"], // only run middleware on /admin
+// };
