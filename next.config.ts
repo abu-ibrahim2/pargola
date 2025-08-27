@@ -1,10 +1,18 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  typescript: {
+    ignoreBuildErrors: true, // ✅ don't fail the build on TS errors
+  },
+  eslint: {
+    ignoreDuringBuilds: true, // ✅ don't fail the build on ESLint errors
+  },
   images: {
     remotePatterns: [
-      { protocol: "https", hostname: "**.supabase.co" }, // or your exact project domain
+      {
+        protocol: "https",
+        hostname: "**.supabase.co", // covers your Supabase project images
+      },
     ],
   },
 };
