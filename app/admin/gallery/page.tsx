@@ -63,19 +63,5 @@ async function listAllImagesWithThumbs(
     };
   });
 
-  // newest first (by path naming with Date.now in your uploader)
   return items;
 }
-
-// import React from "react";
-
-// const page = () => {
-//   return (
-//     <section dir="rtl" className="w-full">
-//       <AdminGalleryUploader /> {/* Upload new images */}
-//       <GalleryAdmin initialItems={items} /> {/* Manage/delete */}
-//     </section>
-//   );
-// };
-
-// export default page;

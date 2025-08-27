@@ -2,7 +2,6 @@ import { Hero } from "@/components/hero";
 import { Services } from "@/components/Services";
 import { GalleryPreview } from "@/components/GalleryPreview";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
-import { Testimonials } from "@/components/Testimonials";
 import Contact from "@/components/ContactSection";
 // {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
 
@@ -14,7 +13,6 @@ export default function Home() {
         <Services />
         <GalleryPreview />
         <WhyChooseUs />
-        {/* <Testimonials /> */}
         <Contact
           title="הצעת מחיר מהירה"
           subtitle="מלאו פרטים ונחזור אליכם עוד היום."
