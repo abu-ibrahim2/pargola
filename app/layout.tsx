@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Geist } from "next/font/google";
-import ClientLayout from "./layouts/ClientLayout";
+import AnalyticsTracker from "@/components/AnalyticsTracker";
 
 import "./globals.css";
 
@@ -28,7 +28,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.className} antialiased`}>
-        <ClientLayout>{children}</ClientLayout>
+        <AnalyticsTracker />
+        {children}
       </body>
     </html>
   );

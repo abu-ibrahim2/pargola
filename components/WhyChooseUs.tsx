@@ -80,7 +80,7 @@ export function WhyChooseUs() {
             <div className="pt-4">
               <a
                 href="tel:0500000000"
-                className="inline-flex items-center justify-center rounded-2xl bg-black px-6 py-3 text-white font-semibold shadow hover:opacity-90 transition"
+                className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-3 text-white font-semibold shadow hover:opacity-90 transition"
               >
                 דברו איתנו היום
               </a>

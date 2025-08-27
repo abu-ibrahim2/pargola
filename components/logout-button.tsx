@@ -15,7 +15,7 @@ export function LogoutButton() {
   };
 
   return (
-    <Button onClick={logout}>
+    <Button className="bg-red-600" onClick={logout}>
       <FaSignOutAlt /> התנתקות
     </Button>
   );

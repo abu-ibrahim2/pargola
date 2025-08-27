@@ -68,7 +68,7 @@ export default function AboutPage() {
                 </Link>
                 <Link
                   href="/contact"
-                  className="rounded-2xl bg-black px-6 py-3 font-semibold text-white shadow hover:opacity-90 transition"
+                  className="rounded-2xl bg-blue-600 px-6 py-3 font-semibold text-white shadow hover:opacity-90 transition"
                 >
                   דברו איתנו
                 </Link>

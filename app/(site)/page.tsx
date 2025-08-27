@@ -3,7 +3,7 @@ import { Services } from "@/components/Services";
 import { GalleryPreview } from "@/components/GalleryPreview";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import { Testimonials } from "@/components/Testimonials";
-import { ContactSection } from "@/components/ContactSection";
+import Contact from "@/components/ContactSection";
 // {!hasEnvVars ? <EnvVarWarning /> : <AuthButton />}
 
 export default function Home() {
@@ -14,8 +14,13 @@ export default function Home() {
         <Services />
         <GalleryPreview />
         <WhyChooseUs />
-        <Testimonials />
-        <ContactSection />
+        {/* <Testimonials /> */}
+        <Contact
+          title="הצעת מחיר מהירה"
+          subtitle="מלאו פרטים ונחזור אליכם עוד היום."
+          showMap={false} // Sections often omit the map to keep the page light
+          whatsappText="שלום! מעוניין בהצעת מחיר לפרגולת אלומיניום."
+        />
       </div>
     </main>
   );

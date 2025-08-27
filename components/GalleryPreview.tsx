@@ -1,19 +1,70 @@
 // app/components/GalleryPreview.tsx
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
-type Item = { src: string; alt: string };
+type Obj = { name: string; id: string; updated_at?: string };
 
-const items: Item[] = [
-  { src: "/images/gallery/g1.jpg", alt: "פרגולה מעץ בחצר" },
-  { src: "/images/gallery/g2.jpg", alt: "פרגולת אלומיניום מודרנית" },
-  { src: "/images/gallery/g3.jpg", alt: "פרגולה עם כיסוי פוליקרבונט" },
-  { src: "/images/gallery/g4.jpg", alt: "פרגולה למרפסת בירושלים" },
-  { src: "/images/gallery/g5.jpg", alt: "פרגולה לבנה בסגנון נקי" },
-  { src: "/images/gallery/g6.jpg", alt: "פרגולה מרחפת מעל דק" },
-];
+const PREVIEW_COUNT = 8; // how many images to show on the homepage
 
 export function GalleryPreview() {
+  const supabase = useMemo(() => createClient(), []);
+  const [items, setItems] = useState<Obj[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Walk bucket folders recursively and collect files
+  const walk = useCallback(
+    async (prefix = ""): Promise<Obj[]> => {
+      const res = await supabase.storage.from("pargola-images").list(prefix, {
+        limit: 1000,
+        sortBy: { column: "updated_at", order: "desc" }, // newest first
+      });
+      if (res.error || !res.data) return [];
+      const out: Obj[] = [];
+      for (const e of res.data) {
+        if ((e as any).id) {
+          out.push({
+            name: e.name,
+            id: (prefix ? `${prefix}/` : "") + e.name,
+            updated_at: (e as any).updated_at,
+          });
+        } else if (e.name) {
+          const nested = await walk(prefix ? `${prefix}/${e.name}` : e.name);
+          out.push(...nested);
+        }
+      }
+      return out;
+    },
+    [supabase]
+  );
+
+  const load = useCallback(async () => {
+    setError(null);
+    setLoading(true);
+    try {
+      const all = await walk("");
+      setItems(all.slice(0, PREVIEW_COUNT)); // only keep the most recent N
+    } catch {
+      setError("שגיאה בטעינת התמונות");
+    } finally {
+      setLoading(false);
+    }
+  }, [walk]);
+
+  useEffect(() => {
+    load();
+  }, [load]);
+
+  const publicUrlFor = (path: string) =>
+    supabase.storage.from("pargola-images").getPublicUrl(path).data.publicUrl;
+
+  const altFromName = (name: string) =>
+    name.replace(/\.[^.]+$/, "").replace(/[-_.]+/g, " ");
+
   return (
     <section dir="rtl" className="w-screen bg-gray-50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
@@ -27,25 +78,46 @@ export function GalleryPreview() {
           </p>
         </header>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {items.map(({ src, alt }, i) => (
-            <figure
-              key={i}
-              className="group relative aspect-[4/3] overflow-hidden rounded-2xl bg-gray-200"
-            >
-              <Image
-                src={src}
-                alt={alt}
-                fill
-                sizes="(max-width: 1024px) 50vw, 25vw"
-                className="object-cover transition duration-300 group-hover:scale-105"
-                priority={i < 2}
+        {/* Grid */}
+        {loading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {Array.from({ length: PREVIEW_COUNT }).map((_, i) => (
+              <div
+                key={i}
+                className="aspect-[4/3] rounded-2xl bg-gray-200 animate-pulse"
               />
-              <figcaption className="pointer-events-none absolute inset-0 bg-black/0 group-hover:bg-black/10 transition" />
-            </figure>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="text-center text-gray-600">
+            אין תמונות להצגה כרגע.
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+            {items.map((obj) => {
+              const url = publicUrlFor(obj.id);
+              return (
+                <figure
+                  key={obj.id}
+                  className="group relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-gray-200 bg-gray-100 shadow-sm transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-md"
+                >
+                  <Image
+                    src={url}
+                    alt={altFromName(obj.name)}
+                    fill
+                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    priority
+                  />
+                  {/* subtle gradient overlay */}
+                  <figcaption className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/35 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                </figure>
+              );
+            })}
+          </div>
+        )}
 
+        {/* CTA */}
         <div className="mt-12 flex justify-center">
           <Link
             href="/gallery"
@@ -54,6 +126,11 @@ export function GalleryPreview() {
             צפו בגלריה המלאה
           </Link>
         </div>
+
+        {/* Error (non-intrusive) */}
+        {error && (
+          <p className="mt-4 text-center text-sm text-red-600">{error}</p>
+        )}
       </div>
     </section>
   );
