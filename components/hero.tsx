@@ -13,7 +13,7 @@ export function Hero() {
       <div className="relative w-full h-[30vh] sm:h-[40vh] lg:h-[55vh]">
         <Image
           src={heroPic}
-          alt="פרגולה יפה בירושלים"
+          alt="פרגולה יפה בארץ"
           fill
           priority
           placeholder="blur"
@@ -30,7 +30,7 @@ export function Hero() {
         <div className="pointer-events-auto mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-2xl text-white">
             <h1 className="text-3xl sm:text-4xl lg:text-6xl font-extrabold leading-tight">
-              פרגולות איכותיות בירושלים
+              פרגולות איכותיות בארץ
             </h1>
             <p className="mt-4 text-base sm:text-lg lg:text-xl text-white/90">
               תכנון, ייצור והתקנה בהתאמה אישית – עמידות מושלמת לשמש הישראלית
