@@ -3,6 +3,7 @@
 import { usePathname } from "next/navigation";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import { ReactNode } from "react";
 
 const excludedPaths = ["/login", "/signup", "/admin"];
@@ -16,6 +17,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       {!hideLayout && <Header />}
       <main className="flex-1">{children}</main>
       {!hideLayout && <Footer />}
+      <WhatsAppButton />
     </div>
   );
 }
