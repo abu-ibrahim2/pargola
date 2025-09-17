@@ -28,7 +28,7 @@ export default function AboutPage() {
             <Stat label="שנות ניסיון" value="8+" />
             <Stat label="פרויקטים מושלמים" value="500+" />
             <Stat label="דירוג לקוחות" value="4.9★" />
-            <Stat label="אחריות עבודה" value="עד 10 שנים" />
+            <Stat label="אחריות עבודה" value="עד שנתיים" />
             <Stat label="זמני התקנה" value="מהירים" />
           </div>
         </div>
@@ -56,6 +56,12 @@ export default function AboutPage() {
                 </li>
                 <li className="flex items-center gap-3">
                   <Dot /> לוחות זמנים ברורים והתקנה נקייה
+                </li>
+                <li className="flex items-center gap-3">
+                  <Dot /> שיבוצים שקופים וברורים לכל לקוח
+                </li>
+                <li className="flex items-center gap-3">
+                  <Dot /> שיבוץ צוות מקצועי לפי מורכבות הפרויקט
                 </li>
               </ul>
 
@@ -93,8 +99,8 @@ export default function AboutPage() {
               />
               <Card
                 icon={<FaTools className="h-6 w-6" />}
-                title="התקנה נקייה"
-                desc="צוות מנוסה, כלים מקצועיים ותיאום מלא עם הלקוח."
+                title="שיבוצים מדויקים"
+                desc="התאמת צוותים, חומרים ולוחות זמנים לכל פרויקט בצורה אישית ומסודרת."
               />
             </div>
           </div>

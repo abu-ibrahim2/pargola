@@ -9,7 +9,6 @@ import PergolaTypePage from "@/components/pergolas/PergolaTypePage";
 import { createClient } from "@/lib/supabase/server";
 import { listAllFilesRecursive } from "@/lib/storage/listAllFiles";
 
-// ⚠️ match your bucket name from the screenshot:
 const BUCKET = "pargola-images";
 
 export const revalidate = 60;
@@ -54,19 +53,22 @@ export default async function Page({
     `pergolas/${type.slug}` // you can add year/month inside, the code will still find files
   );
 
-  // Build public URLs (bucket is Public in your screenshot)
-  const images = files.map((f) => {
+  // Build public URLs and detect media type
+  const isVideoPath = (name: string) =>
+    /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(name);
+  const media = files.map((f) => {
     const { data } = supabase.storage.from(BUCKET).getPublicUrl(f.name);
     return {
       src: data.publicUrl,
       alt: `${type.title} - ${f.name.split("/").pop()}`,
+      isVideo: isVideoPath(f.name),
     };
   });
 
   return (
     <PergolaTypePage
       type={type}
-      images={images}
+      images={media}
       phoneNumber={settings?.phone_number || null}
       whatsappNumber={settings?.whatsapp_number || null}
     />

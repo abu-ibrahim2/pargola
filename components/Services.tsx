@@ -2,7 +2,13 @@
 "use client";
 
 import { RxRulerSquare } from "react-icons/rx";
-import { LuHammer, LuShieldCheck, LuWrench, LuClock, LuTruck } from "react-icons/lu";
+import {
+  LuHammer,
+  LuShieldCheck,
+  LuWrench,
+  LuClock,
+  LuTruck,
+} from "react-icons/lu";
 
 type Service = {
   title: string;
@@ -22,8 +28,8 @@ const services: Service[] = [
     Icon: LuHammer,
   },
   {
-    title: "התקנה מקצועית",
-    desc: "צוות מיומן שמרכיב נקי, מדויק ובטיחותי – בזמן ולפי התקן.",
+    title: "שיבוץ מקצועי",
+    desc: "חלוקה נכונה של אנשי צוות, ציוד וחומרים בכל שלב בפרויקט.",
     Icon: LuTruck,
   },
   {

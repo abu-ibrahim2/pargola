@@ -6,10 +6,10 @@ import Link from "next/link";
 import { PergolaType } from "./config";
 import { FaCheckCircle, FaPhoneAlt, FaWhatsapp } from "react-icons/fa";
 
-type ImageItem = { src: string; alt: string };
-type Props = {
+type MediaItem = { src: string; alt: string; isVideo?: boolean };
+export type Props = {
   type: PergolaType;
-  images: ImageItem[]; // now provided by the page (from Supabase)
+  images?: Array<{ src: string; alt: string } | MediaItem>;
   whatsappNumber?: string | null;
   phoneNumber?: string | null;
 };
@@ -20,7 +20,18 @@ export default function PergolaTypePage({
   whatsappNumber,
   phoneNumber,
 }: Props) {
-  const hero = images[0] || { src: "/images/placeholder.jpg", alt: type.title };
+  const allMedia: MediaItem[] = (images || []).map((item) => {
+    const m = item as MediaItem;
+    const isVid =
+      typeof m.isVideo === "boolean"
+        ? m.isVideo
+        : /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(m.src);
+    return { src: m.src, alt: m.alt, isVideo: isVid };
+  });
+  const hero = allMedia[0] || {
+    src: "/images/placeholder.jpg",
+    alt: type.title,
+  };
 
   return (
     <main dir="rtl" className="w-screen bg-white">
@@ -75,16 +86,44 @@ export default function PergolaTypePage({
               </div>
             </div>
 
-            {/* Hero image */}
+            {/* Hero media */}
             <div className="w-full lg:w-[42%] overflow-hidden rounded-2xl border bg-white shadow-sm">
               <div className="relative w-full aspect-[4/3]">
-                <Image
-                  src={hero.src}
-                  alt={hero.alt}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 100vw, 42vw"
-                />
+                {hero && (hero as MediaItem).isVideo ? (
+                  <video
+                    className="h-full w-full object-cover"
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source
+                      src={hero.src}
+                      type={
+                        hero.src.toLowerCase().endsWith(".webm")
+                          ? "video/webm"
+                          : hero.src.toLowerCase().endsWith(".ogg")
+                          ? "video/ogg"
+                          : hero.src.toLowerCase().endsWith(".m4v")
+                          ? "video/mp4"
+                          : hero.src.toLowerCase().endsWith(".mov")
+                          ? "video/quicktime"
+                          : hero.src.toLowerCase().endsWith(".avi")
+                          ? "video/x-msvideo"
+                          : "video/mp4"
+                      }
+                    />
+                  </video>
+                ) : (
+                  <Image
+                    src={hero.src}
+                    alt={hero.alt}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 1024px) 100vw, 42vw"
+                  />
+                )}
               </div>
             </div>
           </div>
@@ -116,28 +155,54 @@ export default function PergolaTypePage({
       {/* Gallery */}
       <section className="w-full bg-gray-50">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            השראה ותמונות
-          </h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">השראה ומדיה</h2>
 
-          {images.length === 0 ? (
+          {allMedia.length === 0 ? (
             <div className="rounded-xl border bg-white p-6 text-gray-600">
-              אין תמונות לזו הקטגוריה עדיין. בקרוב נעדכן!
+              אין מדיה לזו הקטגוריה עדיין. בקרוב נעדכן!
             </div>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {images.map((img) => (
+              {allMedia.map((m) => (
                 <div
-                  key={img.src}
+                  key={m.src}
                   className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-white border group"
                 >
-                  <Image
-                    src={img.src}
-                    alt={img.alt}
-                    fill
-                    className="object-cover group-hover:scale-[1.02] transition-transform"
-                    sizes="(max-width: 1024px) 100vw, 33vw"
-                  />
+                  {m.isVideo ? (
+                    <video
+                      className="h-full w-full object-cover group-hover:scale-[1.02] transition-transform"
+                      muted
+                      autoPlay
+                      loop
+                      playsInline
+                      preload="metadata"
+                    >
+                      <source
+                        src={m.src}
+                        type={
+                          m.src.toLowerCase().endsWith(".webm")
+                            ? "video/webm"
+                            : m.src.toLowerCase().endsWith(".ogg")
+                            ? "video/ogg"
+                            : m.src.toLowerCase().endsWith(".m4v")
+                            ? "video/mp4"
+                            : m.src.toLowerCase().endsWith(".mov")
+                            ? "video/quicktime"
+                            : m.src.toLowerCase().endsWith(".avi")
+                            ? "video/x-msvideo"
+                            : "video/mp4"
+                        }
+                      />
+                    </video>
+                  ) : (
+                    <Image
+                      src={m.src}
+                      alt={m.alt}
+                      fill
+                      className="object-cover group-hover:scale-[1.02] transition-transform"
+                      sizes="(max-width: 1024px) 100vw, 33vw"
+                    />
+                  )}
                 </div>
               ))}
             </div>

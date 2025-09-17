@@ -30,7 +30,7 @@ export function WhyChooseUs() {
             <div className="absolute inset-0 p-6 sm:p-8 flex flex-col justify-end">
               <div className="grid grid-cols-3 gap-3 sm:gap-4">
                 <Stat label="התקנות" value="500+" />
-                <Stat label="אחריות" value="10 שנים" />
+                <Stat label="אחריות" value="שנתיים" />
                 <Stat label="דירוג" value="4.9★" />
               </div>
             </div>

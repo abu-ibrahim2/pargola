@@ -11,6 +11,7 @@ type UploadItem = {
   status: "idle" | "uploading" | "done" | "error";
   error?: string;
   path?: string; // stored path in bucket
+  isVideo?: boolean;
 };
 
 // match your bucket name from Supabase
@@ -36,12 +37,15 @@ export default function AdminGalleryUploader() {
 
   const onFiles = useCallback((files: FileList | null) => {
     if (!files?.length) return;
-    const imgs = Array.from(files).filter((f) => /image\//i.test(f.type));
-    const mapped = imgs.map((f) => ({
+    const accepted = Array.from(files).filter((f) =>
+      /^(image|video)\//i.test(f.type)
+    );
+    const mapped = accepted.map((f) => ({
       file: f,
       preview: URL.createObjectURL(f),
       progress: 0,
       status: "idle" as const,
+      isVideo: /^video\//i.test(f.type),
     }));
     setItems((prev) => [...prev, ...mapped]);
   }, []);
@@ -87,9 +91,13 @@ export default function AdminGalleryUploader() {
         it.status = "done";
         it.path = path;
         setItems([...updates]);
-      } catch (err: any) {
+      } catch (err: unknown) {
         it.status = "error";
-        it.error = err?.message || "שגיאה";
+        const message =
+          typeof err === "object" && err !== null && "message" in err
+            ? String((err as { message?: string }).message || "שגיאה")
+            : "שגיאה";
+        it.error = message;
         setItems([...updates]);
       }
     }
@@ -125,7 +133,7 @@ export default function AdminGalleryUploader() {
           ))}
         </select>
         <p className="text-xs text-gray-500">
-          התמונות יישמרו ב־
+          המדיה (תמונות/וידאו) תישמר ב־
           <span className="font-mono">
             {` ${BUCKET}/pergolas/${typeSlug}/YYYY/MM/`}
           </span>
@@ -138,7 +146,9 @@ export default function AdminGalleryUploader() {
         onDragOver={(e) => e.preventDefault()}
         className="flex flex-col items-center justify-center gap-3 rounded-2xl border-2 border-dashed border-gray-300 p-10 text-center hover:border-gray-400 transition"
       >
-        <div className="text-gray-800 font-semibold">גררו תמונות לכאן</div>
+        <div className="text-gray-800 font-semibold">
+          גררו תמונות/וידאו לכאן
+        </div>
         <div className="text-sm text-gray-600">או</div>
         <button
           onClick={() => inputRef.current?.click()}
@@ -150,7 +160,7 @@ export default function AdminGalleryUploader() {
           ref={inputRef}
           type="file"
           multiple
-          accept="image/*"
+          accept="image/*,video/*"
           className="sr-only"
           onChange={(e) => onFiles(e.target.files)}
         />
@@ -164,13 +174,29 @@ export default function AdminGalleryUploader() {
                 key={idx}
                 className="relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-gray-200 bg-gray-100"
               >
-                <Image
-                  src={it.preview}
-                  alt=""
-                  fill
-                  unoptimized
-                  className="object-cover"
-                />
+                {it.isVideo ? (
+                  <video
+                    className="h-full w-full object-cover"
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source
+                      src={it.preview}
+                      type={it.file.type || "video/mp4"}
+                    />
+                  </video>
+                ) : (
+                  <Image
+                    src={it.preview}
+                    alt=""
+                    fill
+                    unoptimized
+                    className="object-cover"
+                  />
+                )}
                 <div className="absolute inset-x-0 bottom-0">
                   {it.status === "uploading" && (
                     <div className="h-1 bg-gray-200">

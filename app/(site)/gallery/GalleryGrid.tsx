@@ -88,6 +88,8 @@ export default function GalleryGrid() {
   const publicUrlFor = (path: string) =>
     supabase.storage.from("pargola-images").getPublicUrl(path).data.publicUrl;
 
+  const isVideo = (name: string) => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(name);
+
   // Lightbox state & controls
   const [lightIdx, setLightIdx] = useState<number | null>(null);
   const openLightbox = (idx: number) => setLightIdx(idx);
@@ -142,7 +144,7 @@ export default function GalleryGrid() {
     <div dir="rtl" className="relative">
       <div className="mb-4 flex items-center justify-between">
         <div className="text-sm text-gray-500">
-          {loading ? "טוען..." : `${allItems.length} תמונות`}
+          {loading ? "טוען..." : `${allItems.length} קבצים`}
           {error && <span className="ml-2 text-red-600">{error}</span>}
         </div>
         <button
@@ -165,13 +167,14 @@ export default function GalleryGrid() {
           ))}
         </div>
       ) : visibleItems.length === 0 ? (
-        <div className="text-gray-600">אין תמונות להצגה.</div>
+        <div className="text-gray-600">אין מדיה להצגה.</div>
       ) : (
         <>
           {/* Grid */}
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {visibleItems.map((obj, idx) => {
               const url = publicUrlFor(obj.id);
+              const video = isVideo(obj.name || obj.id);
               return (
                 <button
                   key={obj.id}
@@ -179,13 +182,41 @@ export default function GalleryGrid() {
                   className="group relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-gray-200 bg-gray-100"
                   title={obj.name}
                 >
-                  <Image
-                    src={url}
-                    alt={obj.name}
-                    fill
-                    className="object-cover transition-transform duration-300 group-hover:scale-105"
-                    sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                  />
+                  {video ? (
+                    <video
+                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      muted
+                      autoPlay
+                      loop
+                      playsInline
+                      preload="metadata"
+                    >
+                      <source
+                        src={url}
+                        type={
+                          url.toLowerCase().endsWith(".webm")
+                            ? "video/webm"
+                            : url.toLowerCase().endsWith(".ogg")
+                            ? "video/ogg"
+                            : url.toLowerCase().endsWith(".m4v")
+                            ? "video/mp4"
+                            : url.toLowerCase().endsWith(".mov")
+                            ? "video/quicktime"
+                            : url.toLowerCase().endsWith(".avi")
+                            ? "video/x-msvideo"
+                            : "video/mp4"
+                        }
+                      />
+                    </video>
+                  ) : (
+                    <Image
+                      src={url}
+                      alt={obj.name}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                    />
+                  )}
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
                 </button>
               );
@@ -260,14 +291,45 @@ export default function GalleryGrid() {
             className="relative w-full max-w-6xl h-[70vh] z-10"
             onClick={(e) => e.stopPropagation()}
           >
-            <Image
-              src={publicUrlFor(visibleItems[lightIdx].id)}
-              alt={visibleItems[lightIdx].name}
-              fill
-              className="object-contain"
-              sizes="100vw"
-              priority
-            />
+            {isVideo(
+              visibleItems[lightIdx].name || visibleItems[lightIdx].id
+            ) ? (
+              <video
+                className="h-full w-full object-contain"
+                controls
+                playsInline
+                preload="metadata"
+              >
+                <source
+                  src={publicUrlFor(visibleItems[lightIdx].id)}
+                  type={(() => {
+                    const u = publicUrlFor(
+                      visibleItems[lightIdx].id
+                    ).toLowerCase();
+                    return u.endsWith(".webm")
+                      ? "video/webm"
+                      : u.endsWith(".ogg")
+                      ? "video/ogg"
+                      : u.endsWith(".m4v")
+                      ? "video/mp4"
+                      : u.endsWith(".mov")
+                      ? "video/quicktime"
+                      : u.endsWith(".avi")
+                      ? "video/x-msvideo"
+                      : "video/mp4";
+                  })()}
+                />
+              </video>
+            ) : (
+              <Image
+                src={publicUrlFor(visibleItems[lightIdx].id)}
+                alt={visibleItems[lightIdx].name}
+                fill
+                className="object-contain"
+                sizes="100vw"
+                priority
+              />
+            )}
           </div>
         </div>
       )}

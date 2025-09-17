@@ -53,8 +53,10 @@ export default function AdminGalleryGrid() {
   const publicUrlFor = (path: string) =>
     supabase.storage.from("pargola-images").getPublicUrl(path).data.publicUrl;
 
+  const isVideo = (name: string) => /\.(mp4|webm|ogg|mov|m4v|avi)$/i.test(name);
+
   const remove = async (path: string) => {
-    const ok = window.confirm("האם למחוק את התמונה הזאת לצמיתות?");
+    const ok = window.confirm("האם למחוק את הקובץ הזה לצמיתות?");
     if (!ok) return;
     setDeleting(path);
     await supabase.storage.from("pargola-images").remove([path]);
@@ -67,7 +69,7 @@ export default function AdminGalleryGrid() {
       <div className="mb-4 flex items-center justify-between">
         {/* no title; compact tools on the left */}
         <div className="text-sm text-gray-500">
-          {loading ? "טוען..." : `${items.length} תמונות`}
+          {loading ? "טוען..." : `${items.length} קבצים`}
         </div>
         <button
           onClick={load}
@@ -93,13 +95,47 @@ export default function AdminGalleryGrid() {
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {items.map((obj) => {
             const url = publicUrlFor(obj.id);
+            const video = isVideo(obj.name || obj.id);
             return (
               <div
                 key={obj.id}
                 className="group relative aspect-[4/3] overflow-hidden rounded-2xl ring-1 ring-gray-200 bg-gray-100"
                 title={obj.name}
               >
-                <Image src={url} alt={obj.name} fill className="object-cover" />
+                {video ? (
+                  <video
+                    className="h-full w-full object-cover"
+                    muted
+                    autoPlay
+                    loop
+                    playsInline
+                    preload="metadata"
+                  >
+                    <source
+                      src={url}
+                      type={
+                        url.toLowerCase().endsWith(".webm")
+                          ? "video/webm"
+                          : url.toLowerCase().endsWith(".ogg")
+                          ? "video/ogg"
+                          : url.toLowerCase().endsWith(".m4v")
+                          ? "video/mp4"
+                          : url.toLowerCase().endsWith(".mov")
+                          ? "video/quicktime"
+                          : url.toLowerCase().endsWith(".avi")
+                          ? "video/x-msvideo"
+                          : "video/mp4"
+                      }
+                    />
+                  </video>
+                ) : (
+                  <Image
+                    src={url}
+                    alt={obj.name}
+                    fill
+                    className="object-cover"
+                  />
+                )}
                 {/* hover overlay */}
                 <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0 opacity-0 transition-opacity group-hover:opacity-100" />
                 {/* bottom bar */}
