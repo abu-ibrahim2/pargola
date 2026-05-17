@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { SignUpForm } from "@/components/sign-up-form";
+
+export const metadata: Metadata = {
+  title: "הרשמה",
+  robots: { index: false, follow: false },
+};
 
 export default function Page() {
   return (

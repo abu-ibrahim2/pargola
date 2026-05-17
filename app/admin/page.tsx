@@ -1,5 +1,8 @@
+import type { Metadata } from "next";
 import React from "react";
 import { InfoIcon } from "lucide-react";
+
+export const metadata: Metadata = { title: "לוח בקרה" };
 
 const page = async () => {
   

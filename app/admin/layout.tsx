@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 
 export const metadata = {
-  title: "ניהול אתר | Pargola in Jerusalem",
+  title: { default: "ניהול אתר", template: "%s | ניהול" },
+  robots: { index: false, follow: false },
 };
 
 export default async function AdminSegmentLayout({

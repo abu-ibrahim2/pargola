@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import { LoginForm } from "@/components/login-form";
+
+export const metadata: Metadata = {
+  title: "כניסה לחשבון",
+  robots: { index: false, follow: false },
+};
 
 export default function Page() {
   return (

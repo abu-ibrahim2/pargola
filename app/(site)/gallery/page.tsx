@@ -1,5 +1,20 @@
 // app/gallery/page.tsx
+import type { Metadata } from "next";
 import GalleryGrid from "@/app/(site)/gallery/GalleryGrid";
+
+export const metadata: Metadata = {
+  title: "גלריה – עבודות פרגולות",
+  description:
+    "תמונות מגוון פרויקטי פרגולות שביצענו – אלומיניום, PVC, נפתחות וקבועות בירושלים והסביבה. השראה לפרויקט הבא שלכם.",
+  alternates: { canonical: "/gallery" },
+  openGraph: {
+    title: "גלריה – עבודות פרגולות",
+    description:
+      "תמונות מגוון פרויקטי פרגולות שביצענו – אלומיניום, PVC, נפתחות וקבועות בירושלים והסביבה.",
+    url: "/gallery",
+    type: "website",
+  },
+};
 
 export default function GalleryPage() {
   return (

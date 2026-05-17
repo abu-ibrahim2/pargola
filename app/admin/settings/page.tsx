@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import AdminSettings from "@/components/AdminSettings";
+
+export const metadata: Metadata = { title: "הגדרות אתר" };
 
 export default function SettingsPage() {
   return (
