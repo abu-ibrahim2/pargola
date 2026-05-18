@@ -4,6 +4,7 @@ import { Services } from "@/components/Services";
 import { GalleryPreview } from "@/components/GalleryPreview";
 import { WhyChooseUs } from "@/components/WhyChooseUs";
 import Contact from "@/components/ContactSection";
+import { getSiteSettings } from "@/lib/site-settings";
 
 export const metadata: Metadata = {
   title: {
@@ -39,14 +40,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Home() {
+export default async function Home() {
+  const settings = await getSiteSettings();
+  const phoneNumber = (settings as Record<string, string | null>).phone_number ?? "0544481810";
+
   return (
     <main className="min-h-screen flex flex-col items-center">
       <div className="flex-1 flex-col items-center">
-        <Hero />
-        <Services />
+        <Hero phoneNumber={phoneNumber} />
+        <Services phoneNumber={phoneNumber} />
         <GalleryPreview />
-        <WhyChooseUs />
+        <WhyChooseUs phoneNumber={phoneNumber} />
         <Contact
           title="הצעת מחיר מהירה"
           subtitle="מלאו פרטים ונחזור אליכם עוד היום."

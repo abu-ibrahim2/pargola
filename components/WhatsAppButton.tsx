@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 interface WhatsAppButtonProps {
   phoneNumber?: string;
@@ -8,14 +9,28 @@ interface WhatsAppButtonProps {
 }
 
 export default function WhatsAppButton({
-  phoneNumber = "+972501234567", // Default Israeli number, replace with actual number
-  message = "שלום! אני מעוניין לקבל מידע נוסף על הפרגולות שלכם", // Default Hebrew message
+  phoneNumber: phoneNumberProp,
+  message = "שלום! אני מעוניין לקבל מידע נוסף על הפרגולות שלכם",
 }: WhatsAppButtonProps) {
   const [isHovered, setIsHovered] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState(phoneNumberProp ?? "0544481810");
+  const supabase = useMemo(() => createClient(), []);
+
+  useEffect(() => {
+    if (phoneNumberProp) return;
+    supabase
+      .from("site_settings")
+      .select("whatsapp_number")
+      .eq("id", "site-default")
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.whatsapp_number) setWhatsappNumber(data.whatsapp_number);
+      });
+  }, [supabase, phoneNumberProp]);
 
   const handleClick = () => {
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber.replace(
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(
       /[^\d]/g,
       ""
     )}?text=${encodedMessage}`;

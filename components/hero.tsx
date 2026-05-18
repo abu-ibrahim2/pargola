@@ -2,7 +2,7 @@
 import Image from "next/image";
 import heroPic from "@/public/images/hero3.jpg";
 
-export function Hero() {
+export function Hero({ phoneNumber }: { phoneNumber?: string | null }) {
   return (
     <section
       dir="rtl"
@@ -51,7 +51,7 @@ export function Hero() {
 
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <a
-                  href="tel:0500000000"
+                  href={`tel:${phoneNumber || "0544481810"}`}
                   className="inline-flex items-center justify-center rounded-2xl bg-white px-5 py-3 text-sm sm:text-base font-semibold text-black shadow hover:opacity-90 transition"
                 >
                   התקשר עכשיו

@@ -49,7 +49,7 @@ const services: Service[] = [
   },
 ];
 
-export function Services() {
+export function Services({ phoneNumber }: { phoneNumber?: string | null }) {
   return (
     <section dir="rtl" className="w-screen bg-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
@@ -90,7 +90,7 @@ export function Services() {
         {/* CTA under services */}
         <div className="mt-12 flex justify-center">
           <a
-            href="tel:0500000000"
+            href={`tel:${phoneNumber || "0544481810"}`}
             className="inline-flex items-center justify-center rounded-2xl bg-blue-600 px-6 py-3 text-white font-semibold shadow hover:opacity-90 transition"
           >
             קבלו הצעת מחיר
