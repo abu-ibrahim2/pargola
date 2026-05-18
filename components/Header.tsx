@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FiPhone, FiMenu, FiX } from "react-icons/fi";
@@ -19,7 +20,7 @@ const nav = [
     label: "פרגולות",
     dropdown: [
       { href: "/pergolas/fixed", label: "פרגולה קבועה" },
-      { href: "/pergolas/opening", label: "פרגולה נפתחת" },
+      { href: "/pergolas/opening", label: "פרגולה נפתחת Select" },
       { href: "/pergolas/pvc", label: "פרגולה נפתחת PVC" },
       {
         href: "/pergolas/aluminum-auto",
@@ -81,9 +82,17 @@ export default function Header() {
           <div className="flex items-center justify-start">
             <Link
               href="/"
-              className="text-2xl font-extrabold tracking-tight text-gray-900 whitespace-nowrap"
+              className="flex items-center gap-2 text-2xl font-extrabold tracking-tight text-gray-900 whitespace-nowrap"
               aria-label={`${settings.site_title || "האתר"} - דף הבית`}
             >
+              <Image
+                src="/images/logo.jpeg"
+                alt="לוגו"
+                width={60}
+                height={60}
+                className="object-contain"
+                priority
+              />
               {loading ? "..." : settings.site_title || "האתר"}
             </Link>
           </div>

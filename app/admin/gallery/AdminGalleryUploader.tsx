@@ -22,7 +22,7 @@ type TypeSlug = "fixed" | "opening" | "pvc" | "aluminum-auto" | "european";
 
 const TYPE_OPTIONS: { slug: TypeSlug; label: string }[] = [
   { slug: "fixed", label: "פרגולה קבועה" },
-  { slug: "opening", label: "פרגולה נפתחת" },
+  { slug: "opening", label: "פרגולה נפתחת Select" },
   { slug: "pvc", label: "פרגולה נפתחת PVC" },
   { slug: "aluminum-auto", label: "פרגולה נפתחת מאלומיניום אוטומטית" },
   { slug: "european", label: "מערכת אירופאית" },
